@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card small-card">
+  <h2>{{ 'Modifier le client' if client else 'Nouveau client' }}</h2>
+  <form method="post" class="grid-form">
+    <label>Nom complet
+      <input type="text" name="full_name" value="{{ client.full_name if client else '' }}" required>
+    </label>
+    <label>Téléphone WhatsApp (format +236...)
+      <input type="text" name="phone" value="{{ client.phone if client else '' }}" required>
+    </label>
+    <label>Email
+      <input type="email" name="email" value="{{ client.email if client and client.email else '' }}">
+    </label>
+    <label>Notes
+      <textarea name="notes" rows="4">{{ client.notes if client and client.notes else '' }}</textarea>
+    </label>
+    <label class="checkbox-row">
+      <input type="checkbox" name="whatsapp_opt_in" {% if not client or client.whatsapp_opt_in %}checked{% endif %}>
+      Le client accepte les notifications WhatsApp
+    </label>
+    <div class="row-gap">
+      <button class="btn primary" type="submit">Enregistrer</button>
+      <a class="btn ghost" href="{{ url_for('dashboard') }}">Annuler</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

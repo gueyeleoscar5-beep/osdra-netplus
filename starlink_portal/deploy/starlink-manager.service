@@ -1,0 +1,13 @@
+[Unit]
+Description=Starlink Subscription Manager
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/opt/starlink_portal
+Environment="PATH=/opt/starlink_portal/.venv/bin"
+ExecStart=/opt/starlink_portal/.venv/bin/python /opt/starlink_portal/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

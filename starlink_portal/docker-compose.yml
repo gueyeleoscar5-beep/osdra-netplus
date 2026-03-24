@@ -1,0 +1,11 @@
+services:
+  starlink-manager:
+    build: .
+    container_name: starlink-manager
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data

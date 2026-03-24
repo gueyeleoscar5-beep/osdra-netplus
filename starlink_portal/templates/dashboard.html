@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+  <div class="toolbar">
+    <div>
+      <h2>Clients et kits</h2>
+      <p class="muted">Rappels automatiques impayés configurés pour J+{{ reminder_days|join(', J+') }}</p>
+    </div>
+    <form method="post" action="{{ url_for('run_reminders') }}">
+      <button class="btn secondary" type="submit">Lancer les rappels maintenant</button>
+    </form>
+  </div>
+</section>
+
+{% if rows %}
+  {% for row in rows %}
+    <section class="card client-block">
+      <div class="client-header">
+        <div>
+          <h3>{{ row.client.full_name }}</h3>
+          <p><strong>Nom du client :</strong> {{ row.client.full_name }}</p>
+          <p><strong>Téléphone:</strong> {{ row.client.phone }} {% if row.client.email %} | <strong>Email:</strong> {{ row.client.email }}{% endif %}</p>
+          <p><strong>Opt-in WhatsApp:</strong> {{ 'Oui' if row.client.whatsapp_opt_in else 'Non' }}</p>
+          <p class="link-line"><strong>Lien client:</strong> <a href="{{ row.portal_url }}" target="_blank">{{ row.portal_url }}</a></p>
+        </div>
+        <div class="actions-wrap">
+          <a class="btn ghost" href="{{ url_for('edit_client', client_id=row.client.id) }}">Modifier client</a>
+          <a class="btn primary" href="{{ url_for('create_kit', client_id=row.client.id) }}">Ajouter un kit</a>
+          <form method="post" action="{{ url_for('delete_client', client_id=row.client.id) }}" onsubmit="return confirm('Supprimer ce client et tous ses kits ?');">
+            <button class="btn danger" type="submit">Supprimer client</button>
+          </form>
+        </div>
+      </div>
+
+      {% if row.kits %}
+        <div class="kit-grid">
+          {% for kit in row.kits %}
+            <article class="kit-card">
+              <div class="status-pill {{ kit.status.badge }}">{{ kit.status.label }}</div>
+              <h4>{{ kit.model.label }}</h4>
+              <p><strong>Nom du client :</strong> {{ row.client.full_name }}</p>
+              <p><strong>S/N:</strong> {{ kit.model.serial_number }}</p>
+              <p><strong>Montant:</strong> {{ '%.0f'|format(kit.model.monthly_amount) }}</p>
+              <p><strong>Expiration:</strong> {{ kit.model.expiry_date.strftime('%d/%m/%Y') }}</p>
+              <p><strong>État:</strong> {{ kit.status.message }}</p>
+              {% if kit.model.notes %}<p><strong>Notes:</strong> {{ kit.model.notes }}</p>{% endif %}
+
+              <div class="actions-wrap vertical">
+                <form method="post" action="{{ url_for('mark_paid', kit_id=kit.model.id) }}">
+                  <input type="hidden" name="amount" value="{{ kit.model.monthly_amount }}">
+                  <button class="btn success" type="submit">Enregistrer paiement + notifier</button>
+                </form>
+                {% if kit.status.label == 'En retard' %}
+                <form method="post" action="{{ url_for('mark_unpaid_now', kit_id=kit.model.id) }}">
+                  <button class="btn warning" type="submit">Envoyer rappel impayé maintenant</button>
+                </form>
+                {% endif %}
+                <a class="btn ghost" href="{{ url_for('edit_kit', kit_id=kit.model.id) }}">Modifier kit</a>
+                <form method="post" action="{{ url_for('delete_kit', kit_id=kit.model.id) }}" onsubmit="return confirm('Supprimer ce kit ?');">
+                  <button class="btn danger" type="submit">Supprimer kit</button>
+                </form>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">Aucun kit pour ce client.</p>
+      {% endif %}
+    </section>
+  {% endfor %}
+{% else %}
+  <section class="card center-card small-card">
+    <h3>Aucun client pour l’instant</h3>
+    <p class="muted">Commence par ajouter un client, puis crée son kit Starlink.</p>
+    <a class="btn primary" href="{{ url_for('create_client') }}">Ajouter un client</a>
+  </section>
+{% endif %}
+{% endblock %}

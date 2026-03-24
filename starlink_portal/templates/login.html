@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card small-card center-card">
+  <div class="brand-center">
+    <img class="brand-logo large" src="{{ url_for('static', filename='logo_osdra_netplus.svg') }}" alt="{{ app_name }} logo">
+  </div>
+  <h2>Connexion administrateur</h2>
+  <form method="post" class="grid-form">
+    <label>Nom d’utilisateur
+      <input type="text" name="username" required>
+    </label>
+    <label>Mot de passe
+      <input type="password" name="password" required>
+    </label>
+    <button class="btn primary" type="submit">Se connecter</button>
+  </form>
+  <p class="muted">Identifiants par défaut: <strong>admin / admin123</strong> (à changer dans les variables d’environnement).</p>
+</section>
+{% endblock %}

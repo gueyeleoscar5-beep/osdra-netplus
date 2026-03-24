@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title or app_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <img class="brand-logo" src="{{ url_for('static', filename='logo_osdra_netplus.svg') }}" alt="{{ app_name }} logo">
+      <div>
+        <h1>{{ app_name }}</h1>
+        <p>{{ app_tagline }}</p>
+      </div>
+    </div>
+    {% if session.get('admin_logged_in') %}
+      <nav>
+        <a class="btn ghost" href="{{ url_for('dashboard') }}">Tableau de bord</a>
+        <a class="btn ghost" href="{{ url_for('create_client') }}">Nouveau client</a>
+        <a class="btn danger" href="{{ url_for('logout') }}">Déconnexion</a>
+      </nav>
+    {% endif %}
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

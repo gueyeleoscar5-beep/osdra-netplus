@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+  <h2>Suivi d’abonnement</h2>
+  <p><strong>Nom du client :</strong> {{ client.full_name }}</p>
+  <p><strong>Contact:</strong> {{ client.phone }}</p>
+  <p class="muted">Ce lien peut être partagé au client pour suivre l’état de son abonnement.</p>
+</section>
+
+{% for kit in kits %}
+<section class="card">
+  <div class="status-pill {{ kit.status.badge }}">{{ kit.status.label }}</div>
+  <h3>{{ kit.model.label }}</h3>
+  <p><strong>Nom du client :</strong> {{ client.full_name }}</p>
+  <p><strong>S/N:</strong> {{ kit.model.serial_number }}</p>
+  <p><strong>Montant mensuel:</strong> {{ '%.0f'|format(kit.model.monthly_amount) }}</p>
+  <p><strong>Expiration:</strong> {{ kit.model.expiry_date.strftime('%d/%m/%Y') }}</p>
+  <p><strong>État:</strong> {{ kit.status.message }}</p>
+
+  <h4>Derniers paiements</h4>
+  {% if kit.payments %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Payé le</th>
+            <th>Montant</th>
+            <th>Période</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in kit.payments %}
+          <tr>
+            <td>{{ payment.paid_on.strftime('%d/%m/%Y') }}</td>
+            <td>{{ '%.0f'|format(payment.amount) }}</td>
+            <td>{{ payment.period_start.strftime('%d/%m/%Y') }} → {{ payment.period_end.strftime('%d/%m/%Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="muted">Aucun paiement enregistré pour le moment.</p>
+  {% endif %}
+</section>
+{% endfor %}
+{% endblock %}

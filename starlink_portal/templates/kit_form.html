@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card small-card">
+  <h2>{{ 'Modifier le kit' if kit else 'Nouveau kit' }} — {{ client.full_name }}</h2>
+  <form method="post" class="grid-form">
+    <label>Nom / libellé du kit
+      <input type="text" name="label" value="{{ kit.label if kit else '' }}" placeholder="Kit maison, Kit bureau, etc." required>
+    </label>
+    <label>Numéro de série (S/N)
+      <input type="text" name="serial_number" value="{{ kit.serial_number if kit else '' }}" required>
+    </label>
+    <label>Montant mensuel
+      <input type="number" step="0.01" name="monthly_amount" value="{{ kit.monthly_amount if kit else '' }}" required>
+    </label>
+    <label>Date d’expiration actuelle
+      <input type="date" name="expiry_date" value="{{ kit.expiry_date.isoformat() if kit else '' }}" required>
+    </label>
+    <label>Notes
+      <textarea name="notes" rows="4">{{ kit.notes if kit and kit.notes else '' }}</textarea>
+    </label>
+    <div class="row-gap">
+      <button class="btn primary" type="submit">Enregistrer</button>
+      <a class="btn ghost" href="{{ url_for('dashboard') }}">Annuler</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
